@@ -60,6 +60,27 @@ public class ParserCodeGeneratorFacade {
     }
 }
 ```
+## Facade 2
+از آنجا که کلاس SymbolTable تنها از یک تابع Memory استفاده میکند، میتوان این تابع را بصورت یک واسط Facade به نام SymbolTableMemoryFacade جدا کرد.
+
+```
+package MiniJava.semantic.symbol;
+
+import MiniJava.codeGenerator.Memory;
+
+public class SymbolTableMemoryFacade {
+    private Memory mem;
+
+    public SymbolTableMemoryFacade(Memory mem) {
+        this.mem = mem;
+    }
+
+    public int getDateAddress() {
+        return mem.getDateAddress();
+    }
+}
+```
+
 
 # پاسخ سوالات 
 ### 1.هر یک از مفاهیم زیر را در حد یک خط توضیح دهید.
