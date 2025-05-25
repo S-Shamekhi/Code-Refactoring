@@ -60,6 +60,8 @@ public class ParserCodeGeneratorFacade {
     }
 }
 ```
+
+---
 ## Facade 2
 از آنجا که کلاس SymbolTable تنها از یک تابع Memory استفاده میکند، میتوان این تابع را بصورت یک واسط Facade به نام SymbolTableMemoryFacade جدا کرد.
 
@@ -80,7 +82,126 @@ public class SymbolTableMemoryFacade {
     }
 }
 ```
+---
+## Self Encapsulate Field
+این موضوع در چندین کلاس رعایت نشده است. یکی از نمونه‌‌های آن در کلاس Parser است که متغیر private زیر در داخل کلاس بصورت direct access استفاده شده‌ اند
 
+```
+private ArrayList<Rule> rules;
+private Stack<Integer> parsStack;
+private ParseTable parseTable;
+private lexicalAnalyzer lexicalAnalyzer;
+private ParserCodeGeneratorFacade cg;
+```
+برای اصلاح آن ،مطابق موارد زیر عمل می کنیم :
+
+**How to Refactor**
+- Create a getter (and optional setter) for the field. They should be either protected or public.
+- Find all direct invocations of the field and replace them with getter and setter calls.
+
+برای همین متد های زیر را به کلاس parser اضافه می کنیم و هر جا که این field  ها استفاده شده اند ، با متد مورد نظر جایگزین می کنیم و کلاس parser در نهایت به شکل زیر تغییر پیدا می کند:
+```
+package MiniJava.parser;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Stack;
+
+import MiniJava.Log.Log;
+import MiniJava.codeGenerator.CodeGenerator;
+import MiniJava.errorHandler.ErrorHandler;
+import MiniJava.scanner.lexicalAnalyzer;
+import MiniJava.scanner.token.Token;
+
+public class Parser {
+    private ArrayList<Rule> rules;
+    private Stack<Integer> parsStack;
+    private ParseTable parseTable;
+    private lexicalAnalyzer lexicalAnalyzer;
+    private ParserCodeGeneratorFacade cg;
+
+    public Parser() {
+        parsStack = new Stack<Integer>();
+        pushState(0);
+        try {
+            parseTable = new ParseTable(Files.readAllLines(Paths.get("src/main/resources/parseTable")).get(0));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        rules = new ArrayList<Rule>();
+        try {
+            for (String stringRule : Files.readAllLines(Paths.get("src/main/resources/Rules"))) {
+                rules.add(new Rule(stringRule));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        cg = new ParserCodeGeneratorFacade();
+    }
+
+    public void startParse(java.util.Scanner sc) {
+        lexicalAnalyzer = new lexicalAnalyzer(sc);
+        Token lookAhead = lexicalAnalyzer.getNextToken();
+        boolean finish = false;
+        Action currentAction;
+        while (!finish) {
+            try {
+                Log.print(lookAhead.toString() + "\t" + peekState());
+                currentAction = parseTable.getActionTable(peekState(), lookAhead);
+                Log.print(currentAction.toString());
+
+                switch (currentAction.action) {
+                    case shift:
+                        pushState(currentAction.number);
+                        lookAhead = lexicalAnalyzer.getNextToken();
+                        break;
+
+                    case reduce:
+                        Rule rule = rules.get(currentAction.number);
+                        for (int i = 0; i < rule.RHS.size(); i++) {
+                            popState();
+                        }
+
+                        Log.print(peekState() + "\t" + rule.LHS);
+                        pushState(parseTable.getGotoTable(peekState(), rule.LHS));
+                        Log.print(peekState() + "");
+                        try {
+                            cg.semanticFunction(rule.semanticAction, lookAhead);
+                        } catch (Exception e) {
+                            Log.print("Code Genetator Error");
+                        }
+                        break;
+
+                    case accept:
+                        finish = true;
+                        break;
+                }
+                Log.print("");
+            } catch (Exception ignored) {
+                ignored.printStackTrace();
+            }
+        }
+        if (!ErrorHandler.hasError) cg.printMemory();
+    }
+
+    // === Self-Encapsulated Field methods for parsStack ===
+    private void pushState(int state) {
+        parsStack.push(state);
+    }
+
+    private int popState() {
+        return parsStack.pop();
+    }
+
+    private int peekState() {
+        return parsStack.peek();
+    }
+}
+
+```
+---
 
 # پاسخ سوالات 
 ### 1.هر یک از مفاهیم زیر را در حد یک خط توضیح دهید.
