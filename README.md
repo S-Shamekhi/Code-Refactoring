@@ -33,6 +33,34 @@ Argument --> , GenExpression Argument | lambda
 Identifier --> <IDENTIFIER_LITERAL>
 Integer --> <INTEGER_LITERAL>
 ```
+# Refactoring
+
+## Facade 1
+از آنجا که کلاس Parser تنها از دو تابع CodeGenerator استفاده میکند، میتوان این دو تابع را بصورت یک واسط Facade به نام ParserCodeGeneratorFacade جدا کرد
+یک واسط ساده‌شده برای زیرسیستم تولید کد فراهم می‌کند و وابستگی بین کلاس‌های Parser و CodeGenerator را کاهش می‌دهد.این کار باعث می‌شود کد قابل نگهداری‌تر شده و در آینده راحت‌تر قابل تغییر باشد.
+```
+package MiniJava.parser;
+
+import MiniJava.codeGenerator.CodeGenerator;
+import MiniJava.scanner.token.Token;
+
+public class ParserCodeGeneratorFacade {
+    private final CodeGenerator cg;
+
+    public ParserCodeGeneratorFacade() {
+        this.cg = new CodeGenerator();
+    }
+
+    public void semanticFunction(int func, Token next) {
+        cg.semanticFunction(func, next);
+    }
+
+    public void printMemory() {
+        cg.printMemory();
+    }
+}
+```
+
 # پاسخ سوالات 
 ### 1.هر یک از مفاهیم زیر را در حد یک خط توضیح دهید.
 
