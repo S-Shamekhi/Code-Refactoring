@@ -6,7 +6,12 @@ import MiniJava.scanner.token.Token;
 import MiniJava.semantic.symbol.Symbol;
 import MiniJava.semantic.symbol.SymbolTable;
 import MiniJava.semantic.symbol.SymbolType;
+import MiniJava.codeGenerator.strategy.AddStrategy;
+import MiniJava.codeGenerator.strategy.CodeGeneratorContext;
+import MiniJava.codeGenerator.strategy.SemanticStrategy;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 /**
@@ -18,10 +23,19 @@ public class CodeGenerator {
     private Stack<String> symbolStack = new Stack<>();
     private Stack<String> callStack = new Stack<>();
     private SymbolTable symbolTable;
+    private CodeGeneratorContext context;
+    private Map<Integer, SemanticStrategy> strategies;
 
     public CodeGenerator() {
         symbolTable = new SymbolTable(memory);
-        //TODO
+        context = new CodeGeneratorContext(memory, ss, symbolTable);
+        initializeStrategies();
+    }
+
+    private void initializeStrategies() {
+        strategies = new HashMap<>();
+        strategies.put(10, new AddStrategy(context));
+        // Add other strategies here as we implement them
     }
 
     public void printMemory() {
@@ -30,108 +44,113 @@ public class CodeGenerator {
 
     public void semanticFunction(int func, Token next) {
         Log.print("codegenerator : " + func);
-        switch (func) {
-            case 0:
-                return;
-            case 1:
-                checkID();
-                break;
-            case 2:
-                pid(next);
-                break;
-            case 3:
-                fpid();
-                break;
-            case 4:
-                kpid(next);
-                break;
-            case 5:
-                intpid(next);
-                break;
-            case 6:
-                startCall();
-                break;
-            case 7:
-                call();
-                break;
-            case 8:
-                arg();
-                break;
-            case 9:
-                assign();
-                break;
-            case 10:
-                add();
-                break;
-            case 11:
-                sub();
-                break;
-            case 12:
-                mult();
-                break;
-            case 13:
-                label();
-                break;
-            case 14:
-                save();
-                break;
-            case 15:
-                _while();
-                break;
-            case 16:
-                jpf_save();
-                break;
-            case 17:
-                jpHere();
-                break;
-            case 18:
-                print();
-                break;
-            case 19:
-                equal();
-                break;
-            case 20:
-                less_than();
-                break;
-            case 21:
-                and();
-                break;
-            case 22:
-                not();
-                break;
-            case 23:
-                defClass();
-                break;
-            case 24:
-                defMethod();
-                break;
-            case 25:
-                popClass();
-                break;
-            case 26:
-                extend();
-                break;
-            case 27:
-                defField();
-                break;
-            case 28:
-                defVar();
-                break;
-            case 29:
-                methodReturn();
-                break;
-            case 30:
-                defParam();
-                break;
-            case 31:
-                lastTypeBool();
-                break;
-            case 32:
-                lastTypeInt();
-                break;
-            case 33:
-                defMain();
-                break;
+        if (func == 0) {
+            return;
+        }
+
+        SemanticStrategy strategy = strategies.get(func);
+        if (strategy != null) {
+            strategy.execute(next);
+        } else {
+            // Handle other cases with switch statement for now
+            switch (func) {
+                case 1:
+                    checkID();
+                    break;
+                case 2:
+                    pid(next);
+                    break;
+                case 3:
+                    fpid();
+                    break;
+                case 4:
+                    kpid(next);
+                    break;
+                case 5:
+                    intpid(next);
+                    break;
+                case 6:
+                    startCall();
+                    break;
+                case 7:
+                    call();
+                    break;
+                case 8:
+                    arg();
+                    break;
+                case 9:
+                    assign();
+                    break;
+                case 11:
+                    sub();
+                    break;
+                case 12:
+                    mult();
+                    break;
+                case 13:
+                    label();
+                    break;
+                case 14:
+                    save();
+                    break;
+                case 15:
+                    _while();
+                    break;
+                case 16:
+                    jpf_save();
+                    break;
+                case 17:
+                    jpHere();
+                    break;
+                case 18:
+                    print();
+                    break;
+                case 19:
+                    equal();
+                    break;
+                case 20:
+                    less_than();
+                    break;
+                case 21:
+                    and();
+                    break;
+                case 22:
+                    not();
+                    break;
+                case 23:
+                    defClass();
+                    break;
+                case 24:
+                    defMethod();
+                    break;
+                case 25:
+                    popClass();
+                    break;
+                case 26:
+                    extend();
+                    break;
+                case 27:
+                    defField();
+                    break;
+                case 28:
+                    defVar();
+                    break;
+                case 29:
+                    methodReturn();
+                    break;
+                case 30:
+                    defParam();
+                    break;
+                case 31:
+                    lastTypeBool();
+                    break;
+                case 32:
+                    lastTypeInt();
+                    break;
+                case 33:
+                    defMain();
+                    break;
+            }
         }
     }
 
