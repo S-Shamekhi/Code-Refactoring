@@ -10,6 +10,7 @@ import MiniJava.codeGenerator.strategy.AddStrategy;
 import MiniJava.codeGenerator.strategy.CodeGeneratorContext;
 import MiniJava.codeGenerator.strategy.PidStrategy;
 import MiniJava.codeGenerator.strategy.SemanticStrategy;
+import MiniJava.codeGenerator.strategy.SubStrategy;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +35,7 @@ public class CodeGenerator {
         CodeGeneratorContext context = new CodeGeneratorContext(memory, ss, symbolTable, symbolStack);
         strategies.put(10, new AddStrategy(context));
         strategies.put(2, new PidStrategy(context));
+        strategies.put(11, new SubStrategy(context));
     }
 
     public void printMemory() {
@@ -75,9 +77,6 @@ public class CodeGenerator {
                     break;
                 case 9:
                     assign();
-                    break;
-                case 11:
-                    sub();
                     break;
                 case 12:
                     mult();
