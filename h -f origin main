@@ -1,0 +1,18 @@
+[33m98eb064[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m refactor: Implement Strategy pattern for semantic operations in CodeGenerator - Created SemanticStrategy interface - Added AddStrategy implementation - Introduced CodeGeneratorContext for shared state - Modified CodeGenerator to use strategy pattern
+[33m2b0ada5[m refactoring readme update - Self encapsulation field
+[33m5eb0094[m refactoring applied for Self Encapsulate Field in Parser.java
+[33m04b9109[m refactoring readme update - Facade 2
+[33mccd204c[m Merge branch 'main' of https://github.com/S-Shamekhi/Code-Refactoring if it merges an updated upstream into a topic branch.
+[33m3bc52cd[m refactoring : Facade  in SymbolTable.java and adding SymbolTableMemoryFacade.java class
+[33mdaaa303[m refactoring readme update - Facade 1
+[33m3305055[m refactoring : first facade pattern in Parser.java
+[33mdb167b8[m Remove unused graph classes
+[33mea5a159[m Initial commit: Add full Patterns Project
+[33mf1f26a2[m mini java readme
+[33m91c9984[m answer to document questions- answer of question 6
+[33mdbf5784[m answer of document questions - answer of question 3 and 4
+[33mc51c369[m format
+[33m1ed451f[m fixing format of question 2
+[33m23d4ce5[m answer of document questions- answer of question 2
+[33m4d70c01[m answer to document questions- question 1 response
+[33m3331e02[m Initial commit
