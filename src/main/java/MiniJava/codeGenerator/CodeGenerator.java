@@ -8,6 +8,7 @@ import MiniJava.semantic.symbol.SymbolTable;
 import MiniJava.semantic.symbol.SymbolType;
 import MiniJava.codeGenerator.strategy.AddStrategy;
 import MiniJava.codeGenerator.strategy.CodeGeneratorContext;
+import MiniJava.codeGenerator.strategy.PidStrategy;
 import MiniJava.codeGenerator.strategy.SemanticStrategy;
 
 import java.util.HashMap;
@@ -23,19 +24,16 @@ public class CodeGenerator {
     private Stack<String> symbolStack = new Stack<>();
     private Stack<String> callStack = new Stack<>();
     private SymbolTable symbolTable;
-    private CodeGeneratorContext context;
     private Map<Integer, SemanticStrategy> strategies;
 
     public CodeGenerator() {
         symbolTable = new SymbolTable(memory);
-        context = new CodeGeneratorContext(memory, ss, symbolTable);
-        initializeStrategies();
-    }
-
-    private void initializeStrategies() {
         strategies = new HashMap<>();
+        
+        // Initialize strategies
+        CodeGeneratorContext context = new CodeGeneratorContext(memory, ss, symbolTable, symbolStack);
         strategies.put(10, new AddStrategy(context));
-        // Add other strategies here as we implement them
+        strategies.put(2, new PidStrategy(context));
     }
 
     public void printMemory() {
@@ -56,9 +54,6 @@ public class CodeGenerator {
             switch (func) {
                 case 1:
                     checkID();
-                    break;
-                case 2:
-                    pid(next);
                     break;
                 case 3:
                     fpid();

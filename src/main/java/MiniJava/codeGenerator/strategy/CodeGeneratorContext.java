@@ -10,11 +10,13 @@ public class CodeGeneratorContext {
     private final Memory memory;
     private final Stack<Address> ss;
     private final SymbolTable symbolTable;
+    private final Stack<String> symbolStack;
 
-    public CodeGeneratorContext(Memory memory, Stack<Address> ss, SymbolTable symbolTable) {
+    public CodeGeneratorContext(Memory memory, Stack<Address> ss, SymbolTable symbolTable, Stack<String> symbolStack) {
         this.memory = memory;
         this.ss = ss;
         this.symbolTable = symbolTable;
+        this.symbolStack = symbolStack;
     }
 
     public Memory getMemory() {
@@ -27,5 +29,9 @@ public class CodeGeneratorContext {
 
     public SymbolTable getSymbolTable() {
         return symbolTable;
+    }
+
+    public Stack<String> getSymbolStack() {
+        return symbolStack;
     }
 } 

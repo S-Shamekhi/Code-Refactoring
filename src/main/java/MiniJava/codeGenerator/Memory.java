@@ -20,14 +20,35 @@ public class Memory {
         lastDataAddress = stratDataMemoryAddress;
     }
 
-    public int getTemp() {
+    // Query methods
+    public int getCurrentTempIndex() {
+        return lastTempIndex;
+    }
+
+    public int getCurrentDataAddress() {
+        return lastDataAddress;
+    }
+
+    // Modifier methods
+    private void incrementTempIndex() {
         lastTempIndex += tempSize;
-        return lastTempIndex - tempSize;
+    }
+
+    private void incrementDataAddress() {
+        lastDataAddress += dataSize;
+    }
+
+    // Original methods refactored to use query and modifier
+    public int getTemp() {
+        int currentTemp = getCurrentTempIndex();
+        incrementTempIndex();
+        return currentTemp;
     }
 
     public int getDateAddress() {
-        lastDataAddress += dataSize;
-        return lastDataAddress - dataSize;
+        int currentData = getCurrentDataAddress();
+        incrementDataAddress();
+        return currentData;
     }
 
     public int saveMemory() {
