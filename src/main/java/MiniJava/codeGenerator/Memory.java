@@ -3,15 +3,24 @@ package MiniJava.codeGenerator;
 import java.util.ArrayList;
 
 /**
- * Created by mohammad hosein on 6/27/2015.
+ * Memory management class for the MiniJava compiler.
+ * Handles allocation of temporary and data memory addresses.
  */
 public class Memory {
     private ArrayList<_3AddressCode> codeBlock;
     private int lastTempIndex;
     private int lastDataAddress;
+    
+    /** Starting address for temporary variables in memory */
     private final int stratTempMemoryAddress = 500;
+    
+    /** Starting address for data variables in memory */
     private final int stratDataMemoryAddress = 200;
+    
+    /** Size of each data variable in bytes */
     private final int dataSize = 4;
+    
+    /** Size of each temporary variable in bytes */
     private final int tempSize = 4;
 
     public Memory() {
@@ -45,7 +54,7 @@ public class Memory {
         return currentTemp;
     }
 
-    public int getDateAddress() {
+    public int getDataAddress() {
         int currentData = getCurrentDataAddress();
         incrementDataAddress();
         return currentData;

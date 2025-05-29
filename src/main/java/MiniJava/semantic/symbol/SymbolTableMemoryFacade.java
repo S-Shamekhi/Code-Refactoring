@@ -9,7 +9,7 @@ public class SymbolTableMemoryFacade {
         this.mem = mem;
     }
 
-    public int getDateAddress() {
-        return mem.getDateAddress();
+    public int getDataAddress() {
+        return mem.getDataAddress();
     }
 }
