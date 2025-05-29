@@ -81,28 +81,17 @@ public class Parser {
                         break;
                 }
                 Log.print("");
-            } catch (Exception ignored) {
-                ignored.printStackTrace();
-                //                boolean find = false;
-//                for (NonTerminal t : NonTerminal.values()) {
-//                    if (parseTable.getGotoTable(parsStack.peek(), t) != -1) {
-//                        find = true;
-//                        parsStack.push(parseTable.getGotoTable(parsStack.peek(), t));
-//                        StringBuilder tokenFollow = new StringBuilder();
-//                        tokenFollow.append(String.format("|(?<%s>%s)", t.name(), t.pattern));
-//                        Matcher matcher = Pattern.compile(tokenFollow.substring(1)).matcher(lookAhead.toString());
-//                        while (!matcher.find()) {
-//                            lookAhead = lexicalAnalyzer.getNextToken();
-//                        }
-//                    }
-//                }
-//                if (!find)
-//                    parsStack.pop();
+            } catch (Exception e) {
+                handleParseError(e);
             }
         }
 
         if (!ErrorHandler.hasError)
             getCg().printMemory();
+    }
+
+    private void handleParseError(Exception e) {
+        e.printStackTrace();
     }
 
     // Self-encapsulated getters and setters
