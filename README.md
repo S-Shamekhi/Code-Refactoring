@@ -201,6 +201,112 @@ public class Parser {
 }
 
 ```
+<div dir="rtl">
+
+## 🎯 پیاده‌سازی الگوی Strategy
+
+### مروری کلی
+
+در این پروژه، از **الگوی Strategy** برای بازآرایی عملیات معنایی در کلاس `CodeGenerator` استفاده شده است. این کار موجب کاهش پیچیدگی ساختار switch و تسهیل افزودن عملیات‌های جدید شده است.
+
+---
+
+### مراحل پیاده‌سازی
+
+۱. تعریف واسط `SemanticStrategy`:
+
+```java
+public interface SemanticStrategy {
+    void execute(Token next);
+}
+```
+
+۲. ایجاد کلاس `CodeGeneratorContext` برای به‌اشتراک‌گذاری وضعیت بین استراتژی‌ها:
+
+```java
+public class CodeGeneratorContext {
+    private final Memory memory;
+    private final Stack<Address> ss;
+    private final SymbolTable symbolTable;
+
+    public CodeGeneratorContext(Memory memory, Stack<Address> ss, SymbolTable symbolTable) {
+        this.memory = memory;
+        this.ss = ss;
+        this.symbolTable = symbolTable;
+    }
+
+    public Memory getMemory() { return memory; }
+    public Stack<Address> getSs() { return ss; }
+    public SymbolTable getSymbolTable() { return symbolTable; }
+}
+```
+
+۳. پیاده‌سازی اولین استراتژی `AddStrategy`:
+
+```java
+public class AddStrategy implements SemanticStrategy {
+    private final CodeGeneratorContext context;
+
+    public AddStrategy(CodeGeneratorContext context) {
+        this.context = context;
+    }
+
+    @Override
+    public void execute(Token next) {
+        Address temp = new Address(context.getMemory().getTemp(), varType.Int);
+        Address s2 = context.getSs().pop();
+        Address s1 = context.getSs().pop();
+
+        if (s1.varType != varType.Int || s2.varType != varType.Int) {
+            ErrorHandler.printError("In add two operands must be integer");
+        }
+
+        context.getMemory().add3AddressCode(Operation.ADD, s1, s2, temp);
+        context.getSs().push(temp);
+    }
+}
+```
+
+۴. به‌روزرسانی کلاس `CodeGenerator` برای پشتیبانی از استراتژی‌ها:
+
+```java
+public class CodeGenerator {
+    private Map<Integer, SemanticStrategy> strategies;
+    private final CodeGeneratorContext context;
+
+    public CodeGenerator(CodeGeneratorContext context) {
+        this.context = context;
+        initializeStrategies();
+    }
+
+    private void initializeStrategies() {
+        strategies = new HashMap<>();
+        strategies.put(10, new AddStrategy(context));
+    }
+
+    public void semanticFunction(int func, Token next) {
+        SemanticStrategy strategy = strategies.get(func);
+        if (strategy != null) {
+            strategy.execute(next);
+        } else {
+            // fallback به switch-case برای عملیات‌هایی که هنوز تبدیل نشده‌اند
+        }
+    }
+}
+```
+
+---
+
+### مزایای استفاده از الگوی Strategy
+
+- سازمان‌دهی بهتر کد و جداسازی عملیات‌ها
+- افزودن آسان استراتژی‌های جدید بدون تغییر در کلاس اصلی
+- کاهش وابستگی و پیچیدگی کلاس `CodeGenerator`
+- افزایش قابلیت تست‌پذیری اجزا
+- آماده‌سازی زیرساخت برای استفاده از الگوهای بیشتر مانند Factory
+
+</div>
+
 ---
 
 # پاسخ سوالات 
